@@ -865,6 +865,10 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
         encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true),
       )
   ) {
+    // Removes CommandPhases if no enemy exists. Handles situation where ME pokemon is KO'd during free turn.
+    while (globalScene.phaseManager.tryRemovePhase(p => p.is("CommandPhase"))) {}
+    while (globalScene.phaseManager.tryRemovePhase(p => p.is("EnemyCommandPhase"))) {}
+
     globalScene.phaseManager.pushNew("BattleEndPhase", true);
     if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       globalScene.phaseManager.pushNew("TrainerVictoryPhase");
